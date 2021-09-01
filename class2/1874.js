@@ -13,20 +13,36 @@ const testInput =
 let [size, ...arr] = (testInput || require("fs").readFileSync("/dev/stdin").toString()).split("\n");
 arr = arr.map((i) => Number(i));
 
-let stack = [];
-let output = [];
-let cursor = 0;
+let result = [];
 
-for (let num = 1; num <= Number(size); num++) {
-	stack.push(num);
-	output.push("+");
-	if (num == Number(arr[cursor]))
-		while (stack[stack.length - 1] == arr[cursor] && arr[cursor]) {
-			cursor++;
-			stack.pop();
-			output.push("-");
+let top = 1;
+let stack = [];
+
+for (i = 0; i < size; i++) {
+	let target = Number(arr[i]);
+
+	if (top <= target) {
+		while (top <= target) {
+			stack.push(top);
+			result.push("+");
+
+			if (top == target) {
+				stack.pop();
+				result.push("-");
+			}
+
+			top++;
 		}
+	} else {
+		if (stack[stack.length - 1] != target) {
+			result = [];
+			break;
+		} else {
+			stack.pop();
+			result.push("-");
+		}
+	}
 }
 
-if (cursor == size) output.forEach((i) => console.log(i));
+if (result.length) console.log(result.join("\n"));
 else console.log("NO");
